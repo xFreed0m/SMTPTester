@@ -16,11 +16,11 @@ python SMTPTester.py --tester [tester email] --targets [SMTP IP or file containi
 ```
 
 ## Options to consider
-* -i\--internal
+* -i\\--internal
   * testing only for mail spoofing
-* -e\--external
+* -e\\--external
   * only testing for mail relay
-* -v\--vrfy
+* -v\\--vrfy
   * only perform user enumeration
 the tool will perform both internal and external when no specific test type is specified, and will append the output to a log file on the same folder as the SMTPTester.py file. 
 
