@@ -1,5 +1,5 @@
 # Python 3 script to test SMTP server for spoofing vulnerabilities
-# made by @xFreed0m
+# made by @x_Freed0m
 
 import sys
 import argparse
@@ -80,7 +80,7 @@ def banner():
           # #     #    #    #          #    #           #   #   #      #####  
     #     # #     #    #    #          #    #      #    #   #   #      #   #  
      #####  #     #    #    #          #    ######  ####    #   ###### #    #
-    \nMade by @xFreed0m
+    \nMade by @x_Freed0m
     """)
 
 
