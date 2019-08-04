@@ -107,6 +107,8 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
                 exit(1)
         except (SMTPRecipientsRefused, SMTPSenderRefused) as e:
             LOGGER.critical("[!] SMTP Error: %s\n[-] Server: %s NOT vulnerable!", str(e), target)
+        except ConnectionRefusedError:
+            LOGGER.critical("[!] Connection refused by host %s", target)
         except KeyboardInterrupt:
             LOGGER.critical("[!] [CTRL+C] Stopping...")
             exit(1)
@@ -145,6 +147,8 @@ def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug):
         except (SMTPRecipientsRefused, SMTPSenderRefused) as e:
             LOGGER.critical("[!] SMTP Error: %s\n[-] Server: %s NOT vulnerable or TO address "
                             "doesn't exist!", str(e), target)
+        except ConnectionRefusedError:
+            LOGGER.critical("[!] Connection refused by host %s", target)
         except KeyboardInterrupt:
             LOGGER.critical("[CTRL+C] Stopping...")
             exit(1)
