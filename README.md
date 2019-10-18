@@ -26,7 +26,7 @@ the tool will perform both internal and external when no specific test type is s
 
 ## Docker Build
 ```
-docker build -t <IMAGE NAME>
+docker build -t <IMAGE NAME> .
 docker build -t xshuden/smtptester .
 ```
 
