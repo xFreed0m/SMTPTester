@@ -100,8 +100,8 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
                     msg['To'] = recipient
 
                     current_target.sendmail(fromaddr, recipient, msg.as_string())
-                    LOGGER.info("[+] Server %s Appears to be vulnerable for external relay! email "
-                                "send FROM: %s TO: %s", target, fromaddr, recipient)
+                    LOGGER.critical("[+] Server %s Appears to be VULNERABLE for external relay! "
+                                    "email send FROM: %s TO: %s", target, fromaddr, recipient)
             else:
                 LOGGER.critical("[!] Problem with FROM and/or TO address!")
                 exit(1)
@@ -139,8 +139,8 @@ def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug):
                         msg['To'] = toaddr
 
                         current_target.sendmail(fromaddr, toaddr, msg.as_string())
-                        LOGGER.info("[+] Server %s Appears to be vulnerable for internal "
-                                    "spoofing! Used FROM: %s", target, fromaddr)
+                        LOGGER.critical("[+] Server %s Appears to be VULNERABLE for internal "
+                                        "spoofing! Used FROM: %s", target, fromaddr)
             else:
                 LOGGER.critical("[!] Problem with FROM and/or TO address!")
                 exit(1)
