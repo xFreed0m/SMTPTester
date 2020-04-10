@@ -116,10 +116,10 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug,
                     # Add body to email
                     message.attach(MIMEText(data, "plain"))
 
-                    filename = attachment  # In same directory as script
+                    # filename = attachment  # In same directory as script
 
                     # Open PDF file in binary mode
-                    with open(filename, "rb") as attached:
+                    with open(attachment, "rb") as attached:
                         # Add file as application/octet-stream
                         # Email client can usually download this automatically as attachment
                         part = MIMEBase("application", "octet-stream")
@@ -131,7 +131,7 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug,
                     # Add header as key/value pair to attachment part
                     part.add_header(
                         "Content-Disposition",
-                        f"attachment; filename= {filename}",
+                        "attachment; filename= {attachment}",
                     )
 
                     # Add attachment to message and convert message to string
