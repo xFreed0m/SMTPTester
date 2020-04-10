@@ -7,6 +7,12 @@ import logging
 from colorlog import ColoredFormatter
 import os.path
 from smtplib import SMTP, SMTPRecipientsRefused, SMTPSenderRefused
+
+import email, smtplib, ssl
+
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
@@ -27,6 +33,7 @@ def args_parse():
     args_parser.add_argument('-s', '--subject', help="the Subject to use in the email, default is "
                                                      '"SMTP Pentest"', default="SMTP server "
                                                                                "Pentest")
+    args_parser.add_argument('-att', '--attachment', help="a file you wish to attach to the email", default=None)
     args_parser.add_argument('-i', '--internal',
                              help="Perform internal spoofing test. ", action="store_true")
     args_parser.add_argument('-e', '--external', help="Perform external relay test. ",
@@ -84,7 +91,7 @@ def banner():
     """)
 
 
-def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug):
+def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug, attachment):
     for target in smtp_targets:
         LOGGER.info("[*] Checking host " + target + ':' + str(port))
         LOGGER.info("[*] Testing for mail relaying (external)")
@@ -94,12 +101,44 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
                     if debug:
                         current_target.set_debuglevel(1)
                     current_target.ehlo_or_helo_if_needed()
-                    msg = MIMEText(data)
-                    msg['Subject'] = subject
-                    msg['From'] = fromaddr
-                    msg['To'] = recipient
+                    # msg = MIMEText(data)
+                    # msg['Subject'] = subject
+                    # msg['From'] = fromaddr
+                    # msg['To'] = recipient
+################
+                    # Create a multipart message and set headers
+                    message = MIMEMultipart()
+                    message["From"] = fromaddr
+                    message["To"] = recipient
+                    message["Subject"] = subject
+                    # message["Bcc"] = receiver_email  # Recommended for mass emails
 
-                    current_target.sendmail(fromaddr, recipient, msg.as_string())
+                    # Add body to email
+                    message.attach(MIMEText(data, "plain"))
+
+                    # filename = attachment  # In same directory as script
+
+                    # Open PDF file in binary mode
+                    with open(attachment, "rb") as attached:
+                        # Add file as application/octet-stream
+                        # Email client can usually download this automatically as attachment
+                        part = MIMEBase("application", "octet-stream")
+                        part.set_payload(attached.read())
+
+                    # Encode file in ASCII characters to send by email
+                    encoders.encode_base64(part)
+
+                    # Add header as key/value pair to attachment part
+                    part.add_header(
+                        "Content-Disposition",
+                        "attachment; filename= {attachment}",
+                    )
+
+                    # Add attachment to message and convert message to string
+                    message.attach(part)
+                    text = message.as_string()
+##############
+                    current_target.sendmail(fromaddr, recipient, text)
                     LOGGER.critical("[+] Server %s Appears to be VULNERABLE for external relay! "
                                     "email send FROM: %s TO: %s", target, fromaddr, recipient)
             else:
@@ -116,7 +155,7 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
             excptn(e)
 
 
-def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug):
+def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug, attachment):
     for target in smtp_targets:
         LOGGER.info("[*] Checking host %s:%s for internal spoofing", target, str(port))
         try:
@@ -210,12 +249,12 @@ def main():
         smtp_targets = [args.targets]
     if args.external:
         external_test(smtp_targets, args.port, args.fromaddr, args.tester, data, args.subject,
-                      args.debug)
+                      args.debug, args.attachment)
         external_test(smtp_targets, args.port, fake_address, args.tester, data, args.subject,
-                      args.debug)
+                      args.debug, args.attachment)
     elif args.internal:
         internal_test(smtp_targets, args.port, args.fromaddr, args.toaddr, data, args.subject,
-                      args.debug)
+                      args.debug, args.attachment)
     elif args.vrfy:
         if not args.address:
             LOGGER.critical("[!] Missing the address switch")
@@ -227,11 +266,11 @@ def main():
             vrfy(smtp_targets, args.port, vrfy_addresses, args.debug)
     else:
         external_test(smtp_targets, args.port, args.fromaddr, args.tester, data, args.subject,
-                      args.debug)
+                      args.debug, args.attachment)
         external_test(smtp_targets, args.port, fake_address, args.tester, data, args.subject,
-                      args.debug)
+                      args.debug, args.attachment)
         internal_test(smtp_targets, args.port, args.fromaddr, args.toaddr, data, args.subject,
-                      args.debug)
+                      args.debug, args.attachment)
 
 
 if __name__ == '__main__':
