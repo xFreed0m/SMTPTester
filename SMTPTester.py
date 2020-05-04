@@ -94,6 +94,7 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
     for target in smtp_targets:
         LOGGER.info("[*] Checking host " + target + ':' + str(port))
         LOGGER.info("[*] Testing for mail relaying (external)")
+        data += "\nVulnerable server is: %s" % target
         try:
             if fromaddr and recipient:  # checking we have both to and from addresses
                 with SMTP(target, port) as current_target:
@@ -153,6 +154,7 @@ def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug):
 
     for target in smtp_targets:
         LOGGER.info("[*] Checking host %s:%s for internal spoofing", target, str(port))
+        data += "\nVulnerable server is: %s" % target
         try:
             if fromaddr and toaddr:  # making sure we have both from and to addresses
                 from_domain = fromaddr.split('@').pop()  # getting the domain name from the address
