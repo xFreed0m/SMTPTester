@@ -6,7 +6,7 @@ import argparse
 import logging
 from colorlog import ColoredFormatter
 import os.path
-from smtplib import SMTP, SMTPRecipientsRefused, SMTPSenderRefused, SMTPAuthenticationError
+from smtplib import SMTP, SMTPRecipientsRefused, SMTPSenderRefused, SMTPResponseException
 
 # from email import encoders
 # from email.mime.base import MIMEBase
@@ -135,7 +135,7 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
             else:
                 LOGGER.critical("[!] Problem with FROM and/or TO address!")
                 exit(1)
-        except (SMTPRecipientsRefused, SMTPSenderRefused, SMTPAuthenticationError) as e:
+        except (SMTPRecipientsRefused, SMTPSenderRefused, SMTPResponseException) as e:
             LOGGER.critical("[!] SMTP Error: %s\n[-] Server: %s NOT vulnerable!", str(e), target)
         except ConnectionRefusedError:
             LOGGER.critical("[!] Connection refused by host %s", target)
