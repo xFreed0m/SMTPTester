@@ -8,8 +8,6 @@ from colorlog import ColoredFormatter
 import os.path
 from smtplib import SMTP, SMTPRecipientsRefused, SMTPSenderRefused, SMTPAuthenticationError
 
-import email, smtplib, ssl
-
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -149,7 +147,7 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug,
             excptn(e)
 
 
-def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug, attachment):
+def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug):
     for target in smtp_targets:
         LOGGER.info("[*] Checking host %s:%s for internal spoofing", target, str(port))
         try:
@@ -248,7 +246,7 @@ def main():
                       args.debug, args.attachment)
     elif args.internal:
         internal_test(smtp_targets, args.port, args.fromaddr, args.toaddr, data, args.subject,
-                      args.debug, args.attachment)
+                      args.debug)
     elif args.vrfy:
         if not args.address:
             LOGGER.critical("[!] Missing the address switch")
@@ -264,7 +262,7 @@ def main():
         external_test(smtp_targets, args.port, fake_address, args.tester, data, args.subject,
                       args.debug, args.attachment)
         internal_test(smtp_targets, args.port, args.fromaddr, args.toaddr, data, args.subject,
-                      args.debug, args.attachment)
+                      args.debug)
 
 
 if __name__ == '__main__':
