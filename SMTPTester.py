@@ -8,8 +8,8 @@ from colorlog import ColoredFormatter
 import os.path
 from smtplib import SMTP, SMTPRecipientsRefused, SMTPSenderRefused, SMTPAuthenticationError
 
-from email import encoders
-from email.mime.base import MIMEBase
+# from email import encoders
+# from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -88,7 +88,7 @@ def banner():
     """)
 
 
-def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug, attachment):
+def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug):
     for target in smtp_targets:
         LOGGER.info("[*] Checking host " + target + ':' + str(port))
         LOGGER.info("[*] Testing for mail relaying (external)")
@@ -109,24 +109,24 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug,
                     # Add body to email
                     message.attach(MIMEText(data, "plain"))
 
-                    # Open PDF file in binary mode
-                    with open(attachment, "rb") as attached:
-                        # Add file as application/octet-stream
-                        # Email client can usually download this automatically as attachment
-                        part = MIMEBase("application", "octet-stream")
-                        part.set_payload(attached.read())
-
-                    # Encode file in ASCII characters to send by email
-                    encoders.encode_base64(part)
-
-                    # Add header as key/value pair to attachment part
-                    part.add_header(
-                        "Content-Disposition",
-                        "attachment; filename= {attachment}",
-                    )
-
-                    # Add attachment to message and convert message to string
-                    message.attach(part)
+                    # # Open PDF file in binary mode
+                    # with open(attachment, "rb") as attached:
+                    #     # Add file as application/octet-stream
+                    #     # Email client can usually download this automatically as attachment
+                    #     part = MIMEBase("application", "octet-stream")
+                    #     part.set_payload(attached.read())
+                    #
+                    # # Encode file in ASCII characters to send by email
+                    # encoders.encode_base64(part)
+                    #
+                    # # Add header as key/value pair to attachment part
+                    # part.add_header(
+                    #     "Content-Disposition",
+                    #     "attachment; filename= {attachment}",
+                    # )
+                    #
+                    # # Add attachment to message and convert message to string
+                    # message.attach(part)
                     text = message.as_string()
 ##############
                     current_target.sendmail(fromaddr, recipient, text)
@@ -256,12 +256,9 @@ def main():
             vrfy_addresses = [args.address]
             vrfy(smtp_targets, args.port, vrfy_addresses, args.debug)
     else:
-        external_test(smtp_targets, args.port, args.fromaddr, args.tester, data, args.subject,
-                      args.debug)
-        external_test(smtp_targets, args.port, fake_address, args.tester, data, args.subject,
-                      args.debug)
-        internal_test(smtp_targets, args.port, args.fromaddr, args.toaddr, data, args.subject,
-                      args.debug)
+        external_test(smtp_targets, args.port, args.fromaddr, args.tester, data, args.subject, args.debug)
+        external_test(smtp_targets, args.port, fake_address, args.tester, data, args.subject, args.debug)
+        internal_test(smtp_targets, args.port, args.fromaddr, args.toaddr, data, args.subject, args.debug)
 
 
 if __name__ == '__main__':
