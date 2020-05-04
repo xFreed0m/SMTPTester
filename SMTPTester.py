@@ -31,7 +31,6 @@ def args_parse():
     args_parser.add_argument('-s', '--subject', help="the Subject to use in the email, default is "
                                                      '"SMTP Pentest"', default="SMTP server "
                                                                                "Pentest")
-    args_parser.add_argument('-att', '--attachment', help="a file you wish to attach to the email", default=None)
     args_parser.add_argument('-i', '--internal',
                              help="Perform internal spoofing test. ", action="store_true")
     args_parser.add_argument('-e', '--external', help="Perform external relay test. ",
@@ -241,9 +240,9 @@ def main():
         smtp_targets = [args.targets]
     if args.external:
         external_test(smtp_targets, args.port, args.fromaddr, args.tester, data, args.subject,
-                      args.debug, args.attachment)
+                      args.debug)
         external_test(smtp_targets, args.port, fake_address, args.tester, data, args.subject,
-                      args.debug, args.attachment)
+                      args.debug)
     elif args.internal:
         internal_test(smtp_targets, args.port, args.fromaddr, args.toaddr, data, args.subject,
                       args.debug)
@@ -258,9 +257,9 @@ def main():
             vrfy(smtp_targets, args.port, vrfy_addresses, args.debug)
     else:
         external_test(smtp_targets, args.port, args.fromaddr, args.tester, data, args.subject,
-                      args.debug, args.attachment)
+                      args.debug)
         external_test(smtp_targets, args.port, fake_address, args.tester, data, args.subject,
-                      args.debug, args.attachment)
+                      args.debug)
         internal_test(smtp_targets, args.port, args.fromaddr, args.toaddr, data, args.subject,
                       args.debug)
 
