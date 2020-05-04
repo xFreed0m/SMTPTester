@@ -89,6 +89,8 @@ def banner():
 
 
 def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug):
+    data += "This email is part of external relay and\\or spoofing test"
+
     for target in smtp_targets:
         LOGGER.info("[*] Checking host " + target + ':' + str(port))
         LOGGER.info("[*] Testing for mail relaying (external)")
@@ -147,6 +149,8 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
 
 
 def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug):
+    data += "This email is part of internal relay and\\or spoofing test"
+
     for target in smtp_targets:
         LOGGER.info("[*] Checking host %s:%s for internal spoofing", target, str(port))
         try:
