@@ -6,7 +6,7 @@ import argparse
 import logging
 from colorlog import ColoredFormatter
 import os.path
-from smtplib import SMTP, SMTPRecipientsRefused, SMTPSenderRefused
+from smtplib import SMTP, SMTPRecipientsRefused, SMTPSenderRefused, SMTPAuthenticationError
 
 import email, smtplib, ssl
 
@@ -101,10 +101,6 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug,
                     if debug:
                         current_target.set_debuglevel(1)
                     current_target.ehlo_or_helo_if_needed()
-                    # msg = MIMEText(data)
-                    # msg['Subject'] = subject
-                    # msg['From'] = fromaddr
-                    # msg['To'] = recipient
 ################
                     # Create a multipart message and set headers
                     message = MIMEMultipart()
@@ -115,8 +111,6 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug,
 
                     # Add body to email
                     message.attach(MIMEText(data, "plain"))
-
-                    # filename = attachment  # In same directory as script
 
                     # Open PDF file in binary mode
                     with open(attachment, "rb") as attached:
@@ -144,7 +138,7 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug,
             else:
                 LOGGER.critical("[!] Problem with FROM and/or TO address!")
                 exit(1)
-        except (SMTPRecipientsRefused, SMTPSenderRefused) as e:
+        except (SMTPRecipientsRefused, SMTPSenderRefused, SMTPAuthenticationError) as e:
             LOGGER.critical("[!] SMTP Error: %s\n[-] Server: %s NOT vulnerable!", str(e), target)
         except ConnectionRefusedError:
             LOGGER.critical("[!] Connection refused by host %s", target)
