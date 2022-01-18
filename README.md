@@ -8,7 +8,7 @@ SMTPTester is a python3 tool to test SMTP server for 3 common vulnerabilities:
 ## How to use it
 First, install the needed dependencies:
 ```
-pip install -r requirments.txt
+pip install -r requirements.txt
 ```
 Second, run the tool with the needed flags:
 ```
