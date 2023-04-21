@@ -94,7 +94,7 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
     for target in smtp_targets:
         LOGGER.info("[*] Checking host " + target + ':' + str(port))
         LOGGER.info("[*] Testing for mail relaying (external)")
-        data += "\nVulnerable server is: %s" % target
+        tgt_server = "\n\n\nVulnerable server is: %s" % target
         try:
             if fromaddr and recipient:  # checking we have both to and from addresses
                 with SMTP(target, port) as current_target:
@@ -110,7 +110,7 @@ def external_test(smtp_targets, port, fromaddr, recipient, data, subject, debug)
                     # message["Bcc"] = receiver_email  # Recommended for mass emails
 
                     # Add body to email
-                    message.attach(MIMEText(data, "plain"))
+                    message.attach(MIMEText(data + tgt_server, "plain"))
 
                     # # Open PDF file in binary mode
                     # with open(attachment, "rb") as attached:
