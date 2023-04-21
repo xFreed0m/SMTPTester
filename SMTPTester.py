@@ -154,8 +154,8 @@ def internal_test(smtp_targets, port, fromaddr, toaddr, data, subject, debug):
 
     for target in smtp_targets:
         LOGGER.info("[*] Checking host %s:%s for internal spoofing", target, str(port))
-        data += "\nVulnerable server is: %s" % target
         try:
+            data += "\nVulnerable server is: %s" % target
             if fromaddr and toaddr:  # making sure we have both from and to addresses
                 from_domain = fromaddr.split('@').pop()  # getting the domain name from the address
                 to_domain = toaddr.split('@').pop()  # getting the domain name from the address
